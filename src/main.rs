@@ -80,6 +80,7 @@ fn logout_match(args: &[String]) {
         opts.optopt("i", "ip", "ip", "");
         opts.optflag("d", "detect", "detect client ip");
         opts.optopt("c", "config", "logout by config file", "");
+        opts.optopt("", "select-user", "select user of the config file", "");
         opts.optflag("", "select-ip", "select client ip");
         opts.optflag("", "strict-bind", "strict bind ip");
         opts.optopt("", "acid", "acid", "");
@@ -241,6 +242,7 @@ fn single_login(matches: Matches) {
 
 fn config_logout(matches: Matches) {
     let config_path = matches.opt_str("c").unwrap();
+    let select_user: i32 = matches.opt_str("select-user").unwrap_or("0".to_string()).parse().unwrap_or(-1);
     match read_config_from_file(config_path) {
         Ok(config) => {
             let config_i = config.clone();
@@ -251,11 +253,36 @@ fn config_logout(matches: Matches) {
                     Some(u) => u,
                     None => format!("http://{}", env!("AUTH_SERVER_IP")),
                 });
-            for user in config_i {
+            if select_user > 0 {
+                for user in config_i {
+                    println!("logout user: {:#?}", user);
+                    let ip = user.ip.unwrap_or_else(|| {
+                        get_ip_by_if_name(&user.if_name.unwrap_or_default()).unwrap_or_default()
+                    });
+                    let mut client = SrunClient::new_for_logout(&auth_server, &user.username, &ip)
+                        .set_detect_ip(config.detect_ip)
+                        .set_strict_bind(config.strict_bind);
+
+                    if let Some(acid) = config.acid {
+                        client.set_acid(acid);
+                    }
+
+                    if let Err(e) = client.logout() {
+                        println!("logout error: {}", e);
+                    }
+                }
+            } else {
+                let size = config_i.len();
+                if select_user > size {
+                    Err("select user out of range".to_string()).unwrap();
+                }
+                let user = config_i.get(select_user as usize - 1).unwrap();
                 println!("logout user: {:#?}", user);
+
                 let ip = user.ip.unwrap_or_else(|| {
                     get_ip_by_if_name(&user.if_name.unwrap_or_default()).unwrap_or_default()
                 });
+
                 let mut client = SrunClient::new_for_logout(&auth_server, &user.username, &ip)
                     .set_detect_ip(config.detect_ip)
                     .set_strict_bind(config.strict_bind);
