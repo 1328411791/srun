@@ -39,7 +39,7 @@ jobs:
         run: sudo apt-get update -y && sudo apt-get install -y upx;
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.6
         with:
           profile: minimal
           target: ${{ matrix.target }}
