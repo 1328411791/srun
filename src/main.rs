@@ -272,11 +272,12 @@ fn config_logout(matches: Matches) {
                     }
                 }
             } else {
-                let size = config_i.len();
+                let size = config_i.users.len() as i32;
                 if select_user > size {
-                    Err("select user out of range".to_string()).unwrap();
+                    println!("select user error: {}", select_user);
+                    return;
                 }
-                let user = config_i.get(select_user as usize - 1).unwrap();
+                let user = config_i.users.iter().nth((select_user - 1) as usize).unwrap().clone();
                 println!("logout user: {:#?}", user);
 
                 let ip = user.ip.unwrap_or_else(|| {

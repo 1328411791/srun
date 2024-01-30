@@ -1,6 +1,8 @@
-use crate::User;
-use serde::Deserialize;
 use std::{collections::LinkedList, error::Error, fs::File, io::BufReader, path::Path};
+
+use serde::Deserialize;
+
+use crate::User;
 
 #[derive(Deserialize, Clone, Default)]
 #[serde(default)]
@@ -17,7 +19,7 @@ pub struct Config {
     pub name: Option<String>,
     pub retry_delay: Option<u32>,
     pub retry_times: Option<u32>,
-    users: LinkedList<User>,
+    pub users: LinkedList<User>,
 }
 
 impl Iterator for Config {
