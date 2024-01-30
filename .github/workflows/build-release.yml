@@ -100,7 +100,8 @@ jobs:
 
       - name: Install Rust Source
         run: |
-          rustup component add rust-src --toolchain nightly-${{ matrix.target }}
+          rustup toolchain install nightly-${{ matrix.target }}
+          rustup component add rust-src --toolchain  nightly-${{ matrix.target }}
 
       - name: Build release
         shell: bash
