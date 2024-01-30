@@ -28,10 +28,9 @@ jobs:
           - arm-unknown-linux-musleabihf
           - aarch64-unknown-linux-gnu
           - aarch64-unknown-linux-musl
-    # mips使用musl编译时会报错，暂时不支持
-    #          - mips-unknown-linux-musl
-    #          - mips-unknown-linux-gnu
-    #          - mipsel-unknown-linux-musl
+          - mips-unknown-linux-musl
+          - mips-unknown-linux-gnu
+          - mipsel-unknown-linux-musl
 
     steps:
       - uses: actions/checkout@v2
@@ -44,7 +43,7 @@ jobs:
         with:
           profile: minimal
           target: ${{ matrix.target }}
-          toolchain: nightly
+          toolchain: stable
           default: true
           override: true
 
@@ -98,6 +97,10 @@ jobs:
           toolchain: nightly
           default: true
           override: true
+
+      - name: Install Rust Source
+        run: |
+          rustup component add rust-src --toolchain nightly-{{ matrix.target }}
 
       - name: Build release
         shell: bash
