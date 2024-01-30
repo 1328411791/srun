@@ -127,6 +127,10 @@ jobs:
           default: true
           override: true
 
+      - name: Install Rust Source
+        run: |
+          rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
+
       - name: Build release
         run: |
           pwsh ./build/build-host-release.ps1
