@@ -90,17 +90,13 @@ jobs:
           echo "/usr/local/opt/gnu-tar/libexec/gnubin" >> $GITHUB_PATH
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: crusty-pie/toolchain@v1
         with:
           profile: minimal
           target: ${{ matrix.target }}
           toolchain: nightly
           default: true
           override: true
-
-      - name: Install Rust Source
-        run: |
-          rustup component add rust-src --toolchain nightly-{{ matrix.target }}
 
       - name: Build release
         shell: bash
@@ -124,16 +120,12 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: crusty-pie/toolchain@v1
         with:
           profile: minimal
           toolchain: nightly
           default: true
           override: true
-
-      - name: Install Rust Source
-        run: |
-          rustup component add rust-src --toolchain nightly-x86_64-pc-windows-msvc
 
       - name: Build release
         run: |
